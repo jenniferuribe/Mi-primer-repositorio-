@@ -1,0 +1,258 @@
+# Mi-primer-repositorio-
+
+###ejercicio1
+archivo1<-readRNAStringSet("first.fasta")##leon la secuencia de RNA
+archivo1
+traduccion<-translate(archivo1)#traduscola secuencia para quen me aparezcan los aminoacidos
+traduccion
+aa<-alphabetFrequency(traduccion) #calculo la frecuencia de cada aminoacido
+aa
+
+#####3 ejercicios de Rosalind ###########
+
+########################################### Complementing a Strand of DNA #############################################333
+#librerias especializadas
+
+archivo1<-readRNAStringSet("first.fasta")##leo la secuencia de RNA
+archivo1
+
+reverso_complemento<-reverseComplement(archivo1)#me permite obtener el reverso complemento de mis secuencias concatenadas
+reverso_complemento
+##hacemos lo mismo para cada virus....
+vir1<-archivo1[1]#creo un objeto con el virus 1 del concatenado
+vir1
+reverso_complemento1v<-reverseComplement(vir1)#me permite obtener el reverso complemento de mi virus 1
+reverso_complemento1v
+
+vir2<-archivo1[2]#creo un objeto con el virus 2 del concatenado
+vir2
+reverso_complemento2v<-reverseComplement(vir2)#me permite obtener el reverso complemento de mi virus 2
+reverso_complemento2v
+
+vir3<-archivo1[3]#creo un objeto con el virus 3 del concatenado
+vir3
+reverso_complemento3v<-reverseComplement(vir3)#me permite obtener el reverso complemento de mi virus 3
+reverso_complemento3v
+
+vir4<-archivo1[4]#creo un objeto con el virus 1 del concatenado
+vir4
+reverso_complemento4v<-reverseComplement(vir4)#me permite obtener el reverso complemento de mi virus 4
+reverso_complemento4v
+
+#sin librerias especializadas
+
+vir1<-archivo1[1]#creo un objeto con el virus 1 del concatenado
+vir1#lo corro para verificar
+vector1<-c("U","A","A","U","A","A","U","A","A","U","A","A","U","A","A","U","A","A","U","A","A")#creo un vector con las bases nitrogenadas de la secuencia
+vector1#tiene que ser asi para poder reempalzar cada base
+uracilo<-chartr("U","1",vector1)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+uracilo
+adenina<-chartr("A","U",uracilo)#ocubo el objeto que ya esta modificado
+adenina
+complemento<-chartr("1","A",adenina)#ocupo el objeto ya con los uracilos
+complemento
+comprobacion<-complement(vir1)#podemos comprobar que si se realizo correctamente el complemento
+comprobacion
+reverso<-rev(complemento)##hacemos el reverso de la secuencia invirtiendo el orden del vector
+reverso
+comprobacionfinal<-reverseComplement(vir1)#lo comparamos con la libreria especializada y observamos que tenemos el mismo resultado
+
+####hacemos lo mismo con las demas secuencias....
+vir2<-archivo1[2]#creo un objeto con el virus 1 del concatenado
+vir2#lo corro para verificar
+vector2<-c("C","A","U","G","C","U","C","C","U","C","C","C","U","A","U")#creo un vector con las bases nitrogenadas de la secuencia
+vector2#tiene que ser asi para poder reempalzar cada base
+uracilo2<-chartr("U","1",vector2)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+uracilo2
+adenina2<-chartr("A","U",uracilo2)#ocubo el objeto que ya esta modificado
+adenina2
+complemento2<-chartr("1","A",adenina2)#ocupo el objeto ya con los uracilos
+complemento2
+guanina2<-chartr("G","2",complemento2)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+guanina2
+citocina2<-chartr("C","G",guanina2)#ocubo el objeto que ya esta modificado
+citocina2
+complemento2<-chartr("2","C",citocina2)#ocupo el objeto ya con los uracilos
+complemento2
+comprobacion2<-complement(vir2)#podemos comprobar que si se realizo correctamente el complemento
+comprobacion2
+reverso2<-rev(complemento2)##hacemos el reverso de la secuencia invirtiendo el orden del vector
+reverso2
+comprobacionfinal2<-reverseComplement(vir2)#lo comparamos con la libreria especializada y observamos que tenemos el mismo resultado
+comprobacionfinal2
+###
+vir3<-archivo1[3]#creo un objeto con el virus 3 del concatenado
+vir3#lo corro para verificar
+vector3<-c("A","A","C","G","A","G","U","G","G")#creo un vector con las bases nitrogenadas de la secuencia
+vector3#tiene que ser asi para poder reempalzar cada base
+uracilo3<-chartr("U","1",vector3)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+uracilo3
+adenina3<-chartr("A","U",uracilo3)#ocubo el objeto que ya esta modificado
+adenina3
+complemento3<-chartr("1","A",adenina3)#ocupo el objeto ya con los uracilos
+complemento3
+guanina3<-chartr("G","2",complemento3)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+guanina3
+citocina3<-chartr("C","G",guanina3)#ocubo el objeto que ya esta modificado
+citocina3
+complemento3<-chartr("2","C",citocina3)#ocupo el objeto ya con los uracilos
+complemento3
+comprobacion3<-complement(vir3)#podemos comprobar que si se realizo correctamente el complemento
+comprobacion3
+reverso3<-rev(complemento3)##hacemos el reverso de la secuencia invirtiendo el orden del vector
+reverso3
+comprobacionfinal3<-reverseComplement(vir3)#lo comparamos con la libreria especializada y observamos que tenemos el mismo resultado
+comprobacionfinal3
+##
+vir4<-archivo1[4]#creo un objeto con el virus 1 del concatenado
+vir4#lo corro para verificar
+vector4<-c("U","A","C","G","A","G","G","C","G","A","G","G")#creo un vector con las bases nitrogenadas de la secuencia
+vector4#tiene que ser asi para poder reempalzar cada base
+uracilo4<-chartr("U","1",vector4)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+uracilo4
+adenina4<-chartr("A","U",uracilo4)#ocubo el objeto que ya esta modificado
+adenina4
+complemento4<-chartr("1","A",adenina4)#ocupo el objeto ya con los uracilos
+complemento4
+guanina4<-chartr("G","2",complemento4)#remplazo uracilo en 1, ya que si las reemplazo por A tendria una cadena de puras A y no podria hacer la complementaria de las adeninas que ya estsaban
+guanina4
+citocina4<-chartr("C","G",guanina4)#ocubo el objeto que ya esta modificado
+citocina4
+complemento4<-chartr("2","C",citocina4)#ocupo el objeto ya con los uracilos
+complemento4
+comprobacion4<-complement(vir4)#podemos comprobar que si se realizo correctamente el complemento
+comprobacion4
+reverso4<-rev(complemento4)##hacemos el reverso de la secuencia invirtiendo el orden del vector
+reverso4
+comprobacionfinal4<-reverseComplement(vir4)#lo comparamos con la libreria especializada y observamos que tenemos el mismo resultado
+comprobacionfinal4
+
+#####otra forma mas larga de hacerlo paso por paso....
+vir1<-archivo1[1]
+vir1
+nchar(vir1)
+grepRaw("A",vir1)
+uno<-sub("A", "U", caracteres, ignore.case = FALSE, perl = FALSE,
+         fixed = FALSE, useBytes = FALSE)###este codigo me permite cambiar la primera adenina de cada secuencia por un uracilo
+uno##de esta manera no afecta todas las adeninas y podemos cambiar letra por letra para tener la complementaria completa de cada base
+dos<-sub("A", "U", uno, ignore.case = FALSE, perl = FALSE,
+         fixed = FALSE, useBytes = FALSE)###este codigo me permite cambiar la primera adenina de cada secuencia por un uracilo
+dos
+
+########################################################Counting DNA Nucleotides#####################################
+#librerias especializadas
+archivo1<-readRNAStringSet("first.fasta")##leon la secuencia de RNA
+archivo1
+
+g<- letterFrequency(archivo1, "G")#me permite observar cuantas veces aparece guanina en cada una de las secuencias concatenadas
+g
+t<- letterFrequency(archivo1, "T")#me permite observar cuantas veces aparece timina en cada una de las secuencias concatenadas
+t
+c<- letterFrequency(archivo1, "C")#me permite observar cuantas veces aparece citocina en cada una de las secuencias concatenadas
+c
+a<- letterFrequency(archivo1, "A")#me permite observar cuantas veces aparece adenina en cada una de las secuencias concatenadas
+a
+u<- letterFrequency(archivo1, "U")#me permite observar cuantas veces aparece urasilo en cada una de las secuencias concatenadas
+u
+
+
+oligonucleotideFrequency(archivo1,1)##esta libreria especializada tambien me permite observar de manera detallada cuantas bases hay en cada secuencia
+
+####sin librerias especializadas
+
+archivo1<-readRNAStringSet("first.fasta")##leon la secuencia de RNA
+archivo1
+vir1<-archivo1[1]##creo un objeto con unicamente la secuencia del virus de las concatenadas
+vir1#lo verifico
+nchar(vir1)#veo el numero de caracteres que tiene
+adenina1<-grepRaw("A",vir1, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra adenina en la secuencia
+adenina1#observo las posiciones
+numero_adeninas<-length(adenina1)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_adeninas
+citocina1<-grepRaw("C",vir1, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra citocina en la secuencia
+citocina1#observo las posiciones
+numero_citocinas<-length(citocina1)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_citocinas
+guanina1<-grepRaw("G",vir1, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra uanina en la secuencia
+guanina1#observo las posiciones
+numero_guaninas<-length(guanina1)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_guaninas
+uracilo1<-grepRaw("U",vir1, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra urasilo en la secuencia
+uracilo1#observo las posiciones
+numero_uracilos<-length(uracilo1)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_uracilos
+###realizamos lo mismo con los otros virus
+
+vir2<-archivo1[2]##creo un objeto con unicamente la secuencia del virus de las concatenadas
+vir2#lo verifico
+nchar(vir2)#veo el numero de caracteres que tiene
+adenina2<-grepRaw("A",vir2, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra adenina en la secuencia
+adenina2#observo las posiciones
+numero_adeninas2<-length(adenina2)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_adeninas2
+citocina2<-grepRaw("C",vir2, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra citocinaadenina en la secuencia
+citocina2#observo las posiciones
+numero_citocinas2<-length(citocina2)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_citocinas2
+guanina2<-grepRaw("G",vir2, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra guanina en la secuencia
+guanina2#observo las posiciones
+numero_guaninas2<-length(guanina2)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_guaninas2
+uracilo2<-grepRaw("U",vir2, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra urasilo en la secuencia
+uracilo1#observo las posiciones
+numero_uracilos2<-length(uracilo2)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_uracilos2
+
+vir3<-archivo1[3]##creo un objeto con unicamente la secuencia del virus de las concatenadas
+vir3#lo verifico
+nchar(vir3)#veo el numero de caracteres que tiene
+adenina3<-grepRaw("A",vir3, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra adenina en la secuencia
+adenina3#observo las posiciones
+numero_adeninas3<-length(adenina3)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_adeninas3
+citocina3<-grepRaw("C",vir3, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra citocina en la secuencia
+citocina3#observo las posiciones
+numero_citocinas3<-length(citocina3)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_citocinas3
+guanina3<-grepRaw("G",vir3, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra guanina en la secuencia
+guanina3#observo las posiciones
+numero_guaninas<-length(guanina3)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_guaninas
+uracilo3<-grepRaw("U",vir3, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra uracilo en la secuencia
+uracilo3#observo las posiciones
+numero_uracilo3<-length(uracilo3)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_uracilo3
+
+vir4<-archivo1[4]##creo un objeto con unicamente la secuencia del virus de las concatenadas
+vir4#lo verifico
+nchar(vir4)#veo el numero de caracteres que tiene
+adenina4<-grepRaw("A",vir4, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra adenina en la secuencia
+adenina4#observo las posiciones
+numero_adeninas4<-length(adenina4)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_adeninas4
+citocina4<-grepRaw("C",vir4, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra citocina en la secuencia
+citocina4#observo las posiciones
+numero_citocinas4<-length(citocina4)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_citocinas4
+guanina4<-grepRaw("G",vir4, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra guanina en la secuencia
+guanina4#observo las posiciones
+numero_guaninas4<-length(guanina4)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_guaninas4
+uracilo4<-grepRaw("U",vir4, all=TRUE)#esta funcion me permite observar las posiciones en donde se encuentra uracilo en la secuencia
+uracilo4#observo las posiciones
+numero_uracilos4<-length(uracilo4)###esta funcion me permite ver el numero de bases con respecto a las posiciones
+numero_uracilos4
+
+####hacemos vectores con los resultados...
+
+virus1<-c(14,0,0,7)
+virus2<-c(2,7,1,5)
+virus3<-c(3,1,4,1)
+virus4<-c(3,2,6,1)
+
+matriz<-matrix(c(virus1,virus2,virus3,virus4),ncol = 4)###hacemos una matriz con los vectores de resultados
+matriz
+colnames(matriz)<-c("A","C","G","U")[1:4]#ponemos nombres a las columnas
+row.names(matriz)<-(c("virus1","virus2","virus3","virus4")[1:4])#ponemos nombres a los renglones
+
+matriz#observamos el resultado de la cantidad de cada base nitrogenada en cada una de las secuencias de los virus
