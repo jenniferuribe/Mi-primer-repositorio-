@@ -1,0 +1,760 @@
+# Mi-primer-repositorio-
+############################ comportamiento d ela infeccion de Coronavirus en méxico  ##############################
+
+#promedio de todas las personas suceptibles
+
+library(deSolve) #cargamos la libreria que ocuparemos para resolver el modelo sir
+
+#determinamos el tamaño de nuestra poblacion como numero de nodos
+N = 150
+#determinamos el numero de conecciones totales 
+M= (150-1)*150/2
+M
+#determinamos el numero de contactos promedio por persona
+C= 2*M/N
+C
+#determinamos la probabilidad de contagio por contacto
+beta= 0.132/150
+beta
+gamma= 0.093/150
+gamma
+delta= (beta*N)/(2*M)
+delta
+#determinamos la tasa de tiempo en que se evaluara el modelo
+tiempo <- seq(0, 8784, by = 720)#es el total de horas por el año, seleccionamos separacion de 720 horas para que nos separe las horas por meses
+#y podamos visualizar por que mes del año podria haber un aumento o decaimiento de los factores SIR
+######### formacion del sistema SIR #############
+#estado inicial de los compartimentos
+modelo <- c(S = 39.385,#colocamos este valor de suceptibles (suma de todos los factores)
+            I = 0.132,#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los infectados segun los datos originales
+            R = 0.093)#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los recuperados segun los datos originales
+#determinamos las variables
+variables <- c(beta = 0.00088, #colocamoslos valores de la taza de infeccion para que pueda ser incluida en la operacion
+               gamma = 0.00062)#colocamos los valores de la taza de recuperacion para que pueda ser incluida en la operacion
+#creamos una funcion que nos permita resolver las ecuaciones diferenciales
+sir <- function(tiempo, modelo, variables) { #determianamos que la funcion incluya nuestros valores del modelo y las variables junto con una tasa
+  with(as.list(c(modelo, variables)), {#de tiempo la cual sera el total de horas que tiene el año
+    #ecuaciones diferenciales   
+    dS <- -beta * S * I             #determinamos las ecuaciones finales para que puedan ser sustituidos los valores con el orden dado
+    dI <-  beta * S * I - gamma * I
+    dR <-                 gamma * I
+    #resultados de las tasas de cambio    
+    return(list(c(dS, dI, dR)))
+  })
+}
+###es encesario poner en ese orden la funcion para que pueda ser leido por ODE, y los estados SIR junto con las variables deben ser enlistadas en el mismo orden 
+#por lo mismo
+
+
+#resolvemos el sistema de ecuaciones con función 
+resolucion <- ode(y = modelo, times = tiempo, func = sir, parms = variables)#esta funcion nos permite resolver ecuaciones diferenciales
+resolucion #podemos ver que los recuperados aumentan con forme al tiempo, los infectados decaen por completo por el mes 9 y los suceptibles decaen
+#por completo cuando se presenta el pico mas alto de infectados
+#cambiar la resolucion a una data frame para poder observarla
+data <- as.data.frame(resolucion*N) #se multiolica la resolucion del modelo con el numero de integrantes de la poblacion
+data
+#eliminamos el tiempo de la base de datos para poder graficar
+data$time <- NULL
+
+
+#gráfica
+matplot(x = tiempo, y = data, type = "l",
+        xlab = "Tiempo hr/ año", ylab = "S, I, R", main = "Modelo SIR Covid-19",
+        lwd = 1, lty = 1, bty = "l", col = c("green","orange","purple"))
+#grafica los datos de la resolucion de cada ecuacion con respecto a la poblacion de 150 a tra ves del tiempo d eun año
+
+#añadir leyenda de líneas
+legend(6500, 4000, c("Susceptibles", "Infectados", "Recuperados"), 
+       pch = 1, col = c("green","orange","purple"), bty = "n", cex = 1)
+#las coordenadas de la leyenda varia dependiendo la posicion de los datos
+
+
+########## datos recabados #######
+#N= 150 nodos 
+#M= 11175 conecciones
+#beta= tasa de infeccion =  0.00088 
+#gamma=tasa de  recuperacion = 0.00062
+#c=numero de contactos promedio por individuo = 149
+#delta=probabilidad de contagio por persona que haya tenido contagio (5.90604e-06)
+
+
+################################################ Modelo por factor de suceptibilidad ###############################################################
+####################################################################################################################################################
+
+
+############## ASMA
+
+asma <- c(S = 10.5,#colocamos este valor de suceptibles los cuales son las personas que presnetan asma 
+          I = 0.132,#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los infectados segun los datos originales
+          R = 0.093)#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los recuperados segun los datos originales
+#determinamos las variables
+variables <- c(beta = 0.00088, #colocamoslos valores de la taza de infeccion para que pueda ser incluida en la operacion
+               gamma = 0.00062)#colocamos los valores de la taza de recuperacion para que pueda ser incluida en la operacion
+#creamos una funcion que nos permita resolver las ecuaciones diferenciales
+sir_asma <- function(tiempo, asma, variables) { #determianamos que la funcion incluya nuestros valores del modelo y las variables junto con una tasa
+  with(as.list(c(modelo, variables)), {#de tiempo la cual sera el total de horas que tiene el año
+    #ecuaciones diferenciales   
+    dS <- -beta * S * I             #determinamos las ecuaciones finales para que puedan ser sustituidos los valores con el orden dado
+    dI <-  beta * S * I - gamma * I
+    dR <-                 gamma * I
+    #resultados de las tasas de cambio    
+    return(list(c(dS, dI, dR)))
+  })
+}
+
+#resolvemos el sistema de ecuaciones con función 
+resolucion_asma<- ode(y = asma, times = tiempo, func = sir, parms = variables)
+resolucion_asma #podemos ver que los recuperados aumentan con forme al tiempo, los infectados decaen por completo por el mes 9 y los suceptibles decaen
+#por completo cuando se presenta el pico mas alto de infectados
+#cambiar la resolucion a una data frame para poder observarla
+data_asma <- as.data.frame(resolucion_asma*N) #se multiolica la resolucion del modelo con el numero de integrantes de la poblacion
+#eeliminamos el tiempo de la base de datos para poder graficar
+data_asma$time <- NULL
+
+
+#gráfica
+matplot(x = tiempo, y = data_asma, type = "l",
+        xlab = "Tiempo hr/ año", ylab = "S, I, R", main = "Modelo SIR Asma",
+        lwd = 1, lty = 1, bty = "l", col = c("green","orange","purple"))
+#añadir leyenda de líneas
+legend(6500, 1000, c("Susceptibles", "Infectados", "Recuperados"), 
+       pch = 1, col = c("green","orange","purple"), bty = "n", cex = 1)
+
+############# DIABETES
+
+diabetes <- c(S = 14.025,#colocamos este valor de suceptibles los cuales son las personas que presnetan diabetes
+              I = 0.132,#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los infectados segun los datos originales
+              R = 0.093)#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los recuperados segun los datos originales
+#determinamos las variables
+variables <- c(beta = 0.00088, #colocamoslos valores de la taza de infeccion para que pueda ser incluida en la operacion
+               gamma = 0.00062)#colocamos los valores de la taza de recuperacion para que pueda ser incluida en la operacion
+#creamos una funcion que nos permita resolver las ecuaciones diferenciales
+sir_diabetes <- function(tiempo, diabetes, variables) { #determianamos que la funcion incluya nuestros valores del modelo y las variables junto con una tasa
+  with(as.list(c(modelo, variables)), {#de tiempo la cual sera el total de horas que tiene el año
+    #ecuaciones diferenciales   
+    dS <- -beta * S * I             #determinamos las ecuaciones finales para que puedan ser sustituidos los valores con el orden dado
+    dI <-  beta * S * I - gamma * I
+    dR <-                 gamma * I
+    #resultados de las tasas de cambio    
+    return(list(c(dS, dI, dR)))
+  })
+}
+
+#resolvemos el sistema de ecuaciones con función 
+resolucion_diabetes<- ode(y = diabetes, times = tiempo, func = sir, parms = variables)
+resolucion_diabetes #podemos ver que los recuperados aumentan con forme al tiempo, los infectados decaen por completo por el mes 9 y los suceptibles decaen
+#por completo cuando se presenta el pico mas alto de infectados
+#cambiar la resolucion a una data frame para poder observarla
+data_diabetes <- as.data.frame(resolucion_diabetes*N) #se multiolica la resolucion del modelo con el numero de integrantes de la poblacion
+#eeliminamos el tiempo de la base de datos para poder graficar
+data_diabetes$time <- NULL
+
+
+#gráfica
+matplot(x = tiempo, y = data_diabetes, type = "l",
+        xlab = "Tiempo hr/ año", ylab = "S, I, R", main = "Modelo SIR Diabetes",
+        lwd = 1, lty = 1, bty = "l", col = c("green","orange","purple"))
+#añadir leyenda de líneas
+legend(6500, 1000, c("Susceptibles", "Infectados", "Recuperados"), 
+       pch = 1, col = c("green","orange","purple"), bty = "n", cex = 1)
+
+################# ADULTOS MAYORES
+
+adultos <- c(S = 7.35,#colocamos este valor de suceptibles los cuales son las personas que son adultos mayores
+             I = 0.132,#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los infectados segun los datos originales
+             R = 0.093)#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los recuperados segun los datos originales
+#determinamos las variables
+variables <- c(beta = 0.00088, #colocamoslos valores de la taza de infeccion para que pueda ser incluida en la operacion
+               gamma = 0.00062)#colocamos los valores de la taza de recuperacion para que pueda ser incluida en la operacion
+#creamos una funcion que nos permita resolver las ecuaciones diferenciales
+sir_diabetes <- function(tiempo, diabetes, variables) { #determianamos que la funcion incluya nuestros valores del modelo y las variables junto con una tasa
+  with(as.list(c(modelo, variables)), {#de tiempo la cual sera el total de horas que tiene el año
+    #ecuaciones diferenciales   
+    dS <- -beta * S * I             #determinamos las ecuaciones finales para que puedan ser sustituidos los valores con el orden dado
+    dI <-  beta * S * I - gamma * I
+    dR <-                 gamma * I
+    #resultados de las tasas de cambio    
+    return(list(c(dS, dI, dR)))
+  })
+}
+
+#resolvemos el sistema de ecuaciones con función 
+resolucion_adultos<- ode(y = adultos, times = tiempo, func = sir, parms = variables)
+resolucion_adultos #podemos ver que tarda mas tiempo en llegar al punto maximo la infeccion por lo cual hay mas suceptibles por mas tiempo
+#cambiar la resolucion a una data frame para poder observarla
+data_adultos <- as.data.frame(resolucion_adultos*N) #se multiolica la resolucion del modelo con el numero de integrantes de la poblacion
+#eeliminamos el tiempo de la base de datos para poder graficar
+data_adultos$time <- NULL
+
+
+#gráfica
+matplot(x = tiempo, y = data_adultos, type = "l",
+        xlab = "Tiempo hr/ año", ylab = "S, I, R", main = "Modelo SIR Adultos mayores",
+        lwd = 1, lty = 1, bty = "l", col = c("green","orange","purple"))
+#añadir leyenda de líneas
+legend(6500, 600, c("Susceptibles", "Infectados", "Recuperados"), 
+       pch = 1, col = c("green","orange","purple"), bty = "n", cex = 1)
+
+############### ENFERMEDADES CARDIACAS
+
+enf <- c(S = 7.5,#colocamos este valor de suceptibles los cuales son las personas que presnetan enfermedades cardiacas
+         I = 0.132,#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los infectados segun los datos originales
+         R = 0.093)#colocamos el valor correspondiente a la poblacion de 150, los cuales serian los recuperados segun los datos originales
+#determinamos las variables
+variables <- c(beta = 0.00088, #colocamoslos valores de la taza de infeccion para que pueda ser incluida en la operacion
+               gamma = 0.00062)#colocamos los valores de la taza de recuperacion para que pueda ser incluida en la operacion
+#creamos una funcion que nos permita resolver las ecuaciones diferenciales
+sir_diabetes <- function(tiempo, diabetes, variables) { #determianamos que la funcion incluya nuestros valores del modelo y las variables junto con una tasa
+  with(as.list(c(modelo, variables)), {#de tiempo la cual sera el total de horas que tiene el año
+    #ecuaciones diferenciales   
+    dS <- -beta * S * I             #determinamos las ecuaciones finales para que puedan ser sustituidos los valores con el orden dado
+    dI <-  beta * S * I - gamma * I
+    dR <-                 gamma * I
+    #resultados de las tasas de cambio    
+    return(list(c(dS, dI, dR)))
+  })
+}
+
+#resolvemos el sistema de ecuaciones con función 
+resolucion_enf<- ode(y = enf, times = tiempo, func = sir, parms = variables)
+resolucion_enf #podemos ver que los los infectados tardan mas para llegar al punto maximo y por mas tiempo hay mas suceptibles
+#cambiar la resolucion a una data frame para poder observarla
+data_enf <- as.data.frame(resolucion_enf*N) #se multiolica la resolucion del modelo con el numero de integrantes de la poblacion
+#eeliminamos el tiempo de la base de datos para poder graficar
+data_enf$time <- NULL
+
+
+#gráfica
+matplot(x = tiempo, y = data_enf, type = "l",
+        xlab = "Tiempo hr/ año", ylab = "S, I, R", main = "Modelo SIR Enfermedades Cardiacas",
+        lwd = 1, lty = 1, bty = "l", col = c("green","orange","purple"))
+#añadir leyenda de líneas
+legend(6500, 600, c("Susceptibles", "Infectados", "Recuperados"), 
+       pch = 1, col = c("green","orange","purple"), bty = "n", cex = 1)
+
+
+
+
+################### REPRESENTACION DE LAS REDES ##################
+#cargamos las librerías a utilizar 
+library(igraph)
+library(RCy3)
+library(BoolNet)
+
+####grafica del modelo SIR con los datos de coronavirus
+#posteriormente se realizó una grafica que representa el modelo SIR de acuerdo a los datos obtenidos
+#primero se hizo la transpuesta de la tabla de los datos para que representaran los 3 estados del modelo
+data2<-t(data2<-data1)
+#utilizamos la función binarizeTimeSeries para cambiar los datos de la tabla a binarios
+binarizeTimeSeries(data2)->data_binario
+
+#con la función reconstructNetwork creamos una red a partir de los datos binarios generados anteriormente
+net <-reconstructNetwork(data_binario$binarizedMeasurements, maxK = 3)
+#posteriormente con la función plotNetworkWiring graficamos la red que obtuvimos, indicamos el tamaño de los ejes
+#el color y el color de los nodos
+net<-plotNetworkWiring(net, edge.arrow.size=.1,edge.color="blue",vertex.color="orange")
+
+
+##################################################################################
+#######intento con tabla de sintomas
+
+#posteriormente creamos una tabala con sintomas que aumentan la suceptibilidad de las personas a contraer covid19
+#cargamos la tabla en r y lo asignamos a un objeto llamado tabla_enf
+read.csv("presencia_sintomas.csv")->tabla_enf
+View(tabla_enf)
+
+#posteriormente agregamos los nombres a la tabla, en la tabla hay 150 personas que corresponde a la población que 
+#se tomó en cuenta para resolver el modelo
+nombres_enf<-tabla_enf[,1]
+row.names(tabla_enf)<-nombres_enf[1:150]
+tabla_enf<-tabla_enf[,-1]
+#cargamos la tabla como matriz y verificamos que se haya realizado correctamente
+tabla_enf_mat<-as.matrix(tabla_enf)
+View(tabla_enf_mat)
+
+#para poder hacer una red a partir de esta tabla hacemos un ciclo for para hacer las correlaciones por parejas de personas
+#para de esta manera los más correlacionados serían los que más se parecen en cuanto a los síntomas que presentan
+for ( n in 1:dim(tabla_enf_mat)) {
+  corre<- cor(as.numeric(tabla_enf_mat["P1",]),as.numeric(tabla_enf_mat[n,]))
+  print(paste(corre, rownames(tabla_enf_mat)[n]))
+}
+
+#postriormente hacemos la transpuesta de la matriz e indicamos que en la diagonal deben haber valores de cero
+cor_enf<- cor(t(tabla_enf_mat))
+diag(cor_enf)<-0
+#vemos que se haya realizado correctamente
+View(cor_enf)
+
+#posteriormente hacemos una red a partir de la matriz de adyacencia generada anteriormente
+#con la función graph_from_adjacency_matrix, indicamos que debe ser una red pesada y no dirigida
+red_enfermos<- graph_from_adjacency_matrix(cor_enf, mode = "undirected", weighted = TRUE)
+plot(red_enfermos, edges.arrow.size=0.01)->reddd
+
+#debido a que no se observa bien la red en R la abrimos en cytoscape
+#para ello nos conectamos a cytoscape con la función cytoscapePing
+cytoscapePing()
+#y con la función createNetworkFromIgraph abrimos la red en cytoscape
+createNetworkFromIgraph(red_enfermos,"Red enfermos")
+
+#no funcionó :(
+#debido a que la red tiene muchas conexiones no pudimos realizar el estudio que queríamos
+
+#### Simulación de infección por coronavirus en redes 
+#########################################################################################
+#########################################################################################
+##extracción de datos del modelo SIR
+data->data1
+
+#Visualizamos la base de datos de la que se extraerán los datos
+View(data1)
+
+#la extracción de los datos se realiza con ayuda de ciclos for 
+#para ello se definen los vectores vacíos que se utilizarán dentro de los ciclos
+suceptibles_mes<- c()
+aux<-c()
+
+#se indica que el ciclo se repetirá 13 veces ya que corresponde al número de renglones de
+#la base de datos data1, estos renglones representan la cantidad de suceptibles, infectados y recuperados 
+#por mes de acuerdo al modelo SIR, sin embargo, tenemos que traducir datos a número de personas
+for (i in 1:13){
+  #posteriormeente se extraen los 13 valores de la columna 1 la cual corresponde a suceptibles por mes
+  aux<-c(data1[i,1]); suceptibles_mes<-c(suceptibles_mes,aux)
+  #el resultado se asigna al vecto aux y se acumula en el vector suceptibles_mes
+}
+suceptibles_mes
+
+#se realiza el mismo procedimiento con los infectados de cada mes
+aux_i<-c()
+infectados_mes<- c()
+
+for (i in 1:13){
+  #únicamente se cambia el número de columna a la que contiene a los infectados 
+  aux_i<-c(data1[i,2]); infectados_mes<-c(infectados_mes,aux_i)
+}
+infectados_mes
+
+#se realiza el mismo prpcedimiento con los recuperados por mes
+aux_r<-c()
+recuperados_mes<- c()
+
+for (i in 1:13){
+  #solo se cambia el número de columna, la cual sontiene a los recuperados
+  aux_r<-c(data1[i,3]); recuperados_mes<-c(recuperados_mes,aux_r)
+}
+recuperados_mes
+
+#posteriormente para cambiar los valores arrojados por el modelo hacemos una función que 
+#convierta esos valores a personas
+#la función se llamará s_porce y tiene solo una variable
+s_porce<-function(x){
+  #Primero se sacará el total de infectados, recuperados y suceptibles en porcentaje
+  #total es un vector que representa el total arrojado por el vector, esto se asigna a un vector
+  #llamado personas, posteriormente los valores contenidos en el vector personas se cambiarán a número de personas
+  (x*100)/total->personas
+  #para ello hacemos una regla de tres tomando en cuenta que nuestra población total en el modelo es de 150 personas
+  (personas*150)/100
+}
+
+#vemos que el total es el mismo al sumar los valores de los renglones
+total<-sum(data1[4,])
+
+#posteriormente se aplica la función a los objetos generados anteriomente con los ciclos for 
+s_porce(suceptibles_mes)->total_s
+s_porce(recuperados_mes)->total_r
+s_porce(infectados_mes)->total_i
+#como resultado tendremos vectores con el número de suceptibles, recuperados e infectados por mes
+
+
+########################################################################################
+##Representar el modelo en redes: aleatoria, mundo pequeño, libre escala, exponencial 
+#Cargamos la librería igrap para realizar los analisis correspondientes
+library(igraph)
+
+########################################################################################
+#####################################RED ALEATORIA
+
+#Posteriormente hacemos una red aleatoria con la función random.graph.game
+#indicamos que tiene que tener 150 nodos con la probabilidad de conexión de 1 y no dirigida
+random_corona<- random.graph.game(150, .1, directed = FALSE)
+#utilizamos plot para observar la red, se indica el tamaño de las conexiones
+plot(random_corona, edge.arrow.size=.04)
+#hacemos un histograma para ver la distribución del degree de los nodos
+hist(degree(random_corona), main = "Distribución de conectividades (Random)", col = "blue")
+
+#posterioemente definimos un vector con numeros del 1 al 150, esto para darle nombres a los
+#nodos, posteriormente agregamos los nombres a la grafica generada inicialmente
+nombres_edges<-c(1:150)
+V(random_corona)$name <-nombres_edges[1:150]
+V(random_corona)
+
+#posteriormente indicamos que cambiaremos el color del nodo número 1 de la red generada
+V(random_corona)[name=="1"]$color <- "red"
+#hacemos la grafica de la red para ver el nodo que cambio de color, este será el primer infectado
+plot(random_corona, edge.arrow.size=.04)
+
+#posteriormente con la función neighbors determinamos los vecinos del nodo 1 de la red aleatoria
+#esto lo asignamos a un objeto llamado vecinos1
+neighbors(random_corona,1)->vecinos1
+
+#posteriormente determinaremos los vecinos de los vecinos del nodo1 con un ciclo for
+#para ello determinamos los vectores vacíon que se van a utilizar dentro del ciclo
+aux_v<-c();vecinos_prueba<-c()
+#indicamos que el ciclo se va a repetir en cada valor que contiene el vector vecinos1 
+for (i in vecinos1) {
+  #se indica que se sacarán los vecinos de los nodos dentro del vector vecinos1 de la red aleatoria
+  #el resultado se cambia de clase a numérico para que se pueda acumular el el vector vecinos prueba
+  as.numeric(neighbors(random_corona,i))->aux_v
+  vecinos_prueba<-c(aux_v, vecinos_prueba)
+}
+
+#posteriormente verificamos cuantos elementos tiene el vector vecinos_prueba generado en el ciclo
+length(vecinos_prueba)
+#de acuerdo a los datos obtenidos en el modelo ocurrirán al rededor de 296 contagios en un periodo de un año
+sum(total_i)
+
+#por lo que si el vector de vecinos_prueba no contiene un número mayor de 296, no se pude simular el contagio
+#si esto ocurre el ciclo for se repite para tener los vecinos de los vecinos de los vecinos del nodo1
+vecinos_prueba1<- c()
+for (i in vecinos_prueba) {
+  as.numeric(neighbors(random_corona,i))->aux_v
+  vecinos_prueba1<-c(aux_v, vecinos_prueba1)
+}
+
+#el resultado del ciclo se almacenó en el vector vecinos_prueba1, pero lo asiganamos al vector vecinos_prueba
+#(porque ya habíamos corrido el códio de abajo)
+vecinos_prueba1->vecinos_prueba
+
+#verificamos que el vector tenga más de 296 elementos
+length(vecinos_prueba)
+#una vez que el vector tiene los elementos necesarios ya se puede comenzar la simulación
+
+############################mayo
+#para simular las infecciones por mes se tienen que seguir las cifras que se extrajeron del modelo
+#estas cifras nos indicaran las veces que se tiene que repetir el ciclo
+#en el primer mes se tuvieron 106 contagios por lo tanto el ciclo se repite 106 veces
+for (i in vecinos_prueba[1:106]) {
+  #en cada uno de los ciclos se cambiará de color un nodo vecino del primer infectado
+  #en este caso se coloreará de color rojo, lo que representa que es un nuevo infectado
+  V(random_corona)[name==i]$color <- "red"
+  #graficamos el cambio en los infectados
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+##############################junio
+
+#se realiza lo mismo en cada mes solo cambiando el número de veces que se repite el ciclo
+#y el color de los nodos que fueron infectados este mes
+for (i in vecinos_prueba[107:174]) {
+  V(random_corona)[name==i]$color <- "green"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+#a lo largo de las infecciones hay nodos que se repetirán porque son vecinos 2 o más nodos infectados
+#############################marzo
+
+#En cada mes el numero de infecciones disminurá 
+for (i in vecinos_prueba[175:218]) {
+  V(random_corona)[name==i]$color <- "blue"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+############################julio 
+
+for (i in vecinos_prueba[219:246]) {
+  V(random_corona)[name==i]$color <- "pink"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+###########################agosto
+for (i in vecinos_prueba[247:264]) {
+  V(random_corona)[name==i]$color <- "yellow"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+#########################septiembre
+for (i in vecinos_prueba[265:276]) {
+  V(random_corona)[name==i]$color <- "lightsalmon"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+#########################octubre
+for (i in vecinos_prueba[277:284]) {
+  V(random_corona)[name==i]$color <- "mediumvioletred"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+#########################noviembre
+for (i in vecinos_prueba[285:289]) {
+  V(random_corona)[name==i]$color <- "seagreen"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+######################diciembre
+for (i in vecinos_prueba[290:292]) {
+  V(random_corona)[name==i]$color <- "violetred3"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+#######################enero
+for (i in vecinos_prueba[293:294]) {
+  V(random_corona)[name==i]$color <- "green4"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+######################febrero
+for (i in vecinos_prueba[295:296]) {
+  V(random_corona)[name==i]$color <- "green4"
+  plot(random_corona, edge.arrow.size=.04, main = "Infectados por mes (random)")
+}
+
+#en los ultimos meses ya solo habrá un infectado
+###############################################################################
+###############################################################################
+#al observar la red final podemos ver que hay nodos que no fueron infectados
+#para determinar la cantidad de nodos no infectados tomamos los primeros 296 valores 
+#del vector vecinos_prueba que fue el que se utilizó para hacer la simulación
+#esto se asigna a un vector llamado infectados_final
+vecinos_prueba[1:296]->infectados_final
+
+#cambiamos el vector infectados_final a data frame para poder eliminar a los duplicados
+as.data.frame(infectados_final)->infectados_data
+#eliminamos a los duplicados de la tabla infectados_data y el resultado lo asignamos a 
+#un vector llamado infectados_sin_random, este vector contiene los nodos infectados sin duplicados
+infectados_data[!duplicated(infectados_data), ]->infectados_sin_random
+#para determinar cuantos nodos no se infectaron restamos a nuestra población inicial el numero de nodos infectados
+150-length(infectados_sin_random)
+
+
+####################################################################################
+###################################Mundo pequeño
+#Realizamos el mismo procedimiento en una red de mundo pequeño con el mismo numero de nodos
+
+small_corona<- sample_smallworld(1,150,p=.1,nei=3)
+plot(small_corona, edge.arrow.size=.04)
+hist(degree(small_corona), main = "Distribución de conectividades (mundo pequeño)", col = "blue")
+
+nombres_edges<-c(1:150)
+V(small_corona)$name <-nombres_edges[1:150]
+V(small_corona)
+
+V(small_corona)[name=="1"]$color <- "red"
+plot(small_corona, edge.arrow.size=.04)
+
+neighbors(small_corona,1)->vecinos_small1
+
+aux_v<-c();vecinos_prueba_small<-c()
+for (i in vecinos_small1) {
+  as.numeric(neighbors(small_corona,i))->aux_v
+  vecinos_prueba_small<-c(aux_v, vecinos_prueba_small)
+}
+
+length(vecinos_prueba_small)
+
+vecinos_prueba_small1<- c()
+for (i in vecinos_prueba_small) {
+  as.numeric(neighbors(small_corona,i))->aux_v
+  vecinos_prueba_small1<-c(aux_v, vecinos_prueba_small1)
+}
+
+vecinos_prueba_small1->vecinos_prueba_small
+
+length(vecinos_prueba_small)
+
+for (i in vecinos_prueba_small) {
+  as.numeric(neighbors(small_corona,i))->aux_v
+  vecinos_prueba_small1<-c(aux_v, vecinos_prueba_small1)
+}
+
+vecinos_prueba_small1->vecinos_prueba_small
+length(vecinos_prueba_small)
+
+
+############################enero
+
+for (i in vecinos_prueba_small[1:106]) {
+  V(small_corona)[name==i]$color <- "red"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+##############################febrero
+
+
+for (i in vecinos_prueba_small[107:174]) {
+  V(small_corona)[name==i]$color <- "green"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+#############################marzo
+
+for (i in vecinos_prueba_small[175:218]) {
+  V(small_corona)[name==i]$color <- "blue"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+############################abril 
+
+for (i in vecinos_prueba_small[219:246]) {
+  V(small_corona)[name==i]$color <- "pink"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+###########################mayo 
+for (i in vecinos_prueba_small[247:264]) {
+  V(small_corona)[name==i]$color <- "yellow"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+#########################junio
+for (i in vecinos_prueba_small[265:276]) {
+  V(small_corona)[name==i]$color <- "lightsalmon"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+#########################julio
+for (i in vecinos_prueba_small[277:284]) {
+  V(small_corona)[name==i]$color <- "mediumvioletred"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+#########################agosto
+for (i in vecinos_prueba_small[285:289]) {
+  V(small_corona)[name==i]$color <- "seagreen"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+######################septiembre
+for (i in vecinos_prueba_small[290:292]) {
+  V(small_corona)[name==i]$color <- "violetred3"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+#######################ocubre
+for (i in vecinos_prueba_small[293:294]) {
+  V(small_corona)[name==i]$color <- "green4"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+######################noviembre
+for (i in vecinos_prueba_small[295:296]) {
+  V(small_corona)[name==i]$color <- "green4"
+  plot(small_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+######################################################################################
+#realizamos el mismo procedimiento para ver cuantos nodos no se infectaron durante la simulación
+vecinos_prueba_small[1:296]->infectados_final_small
+
+as.data.frame(infectados_final_small)->infectados_data_small
+
+infectados_data_small[!duplicated(infectados_data_small), ]->infectados_sin_small
+150-length(infectados_sin_small)
+
+#vemos qye hay más nodos que no fueron infectados
+
+###############################################################################################
+###############################################################################################
+#realizamos el mismo procedimiento con una red de libre escala
+
+barabasi.game(150, directed = FALSE)-> free_corona
+plot(free_corona, edge.arrow.size=.04)
+hist(degree(free_corona),main = "Distribución de conectividades (Libre escala)", col = "blue")
+
+nombres_edges<-c(1:150)
+V(free_corona)$name <-nombres_edges[1:150]
+V(free_corona)
+
+V(free_corona)[name=="1"]$color <- "red"
+plot(free_corona, edge.arrow.size=.04)
+
+neighbors(free_corona,1)->vecinos_free
+
+aux_v<-c();vecinos_prueba_free<-c()
+for (i in vecinos_free) {
+  as.numeric(neighbors(free_corona,i))->aux_v
+  vecinos_prueba_free<-c(aux_v, vecinos_prueba_free)
+}
+
+length(vecinos_prueba_free)
+
+vecinos_prueba_free1<- c()
+#correr una vez desde el vector y otra vez sin el vector
+for (i in vecinos_prueba_free) {
+  as.numeric(neighbors(free_corona,i))->aux_v
+  vecinos_prueba_free1<-c(aux_v, vecinos_prueba_free1)
+}
+
+vecinos_prueba_free1->vecinos_prueba_free
+
+length(vecinos_prueba_free)
+
+############################enero
+
+for (i in vecinos_prueba_free[1:106]) {
+  V(free_corona)[name==i]$color <- "red"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+##############################febrero
+
+
+for (i in vecinos_prueba_free[107:174]) {
+  V(free_corona)[name==i]$color <- "green"
+  plot(free_corona, edge.arrow.size=.04)
+}
+
+#############################marzo
+
+for (i in vecinos_prueba_free[175:218]) {
+  V(free_corona)[name==i]$color <- "blue"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+############################abril 
+
+for (i in vecinos_prueba_free[219:246]) {
+  V(free_corona)[name==i]$color <- "pink"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+###########################mayo 
+for (i in vecinos_prueba_free[247:264]) {
+  V(free_corona)[name==i]$color <- "yellow"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+#########################junio
+for (i in vecinos_prueba_free[265:276]) {
+  V(free_corona)[name==i]$color <- "lightsalmon"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Small world)")
+}
+
+#########################julio
+for (i in vecinos_prueba_free[277:284]) {
+  V(free_corona)[name==i]$color <- "mediumvioletred"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+#########################agosto
+for (i in vecinos_prueba_free[285:289]) {
+  V(free_corona)[name==i]$color <- "seagreen"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+######################septiembre
+for (i in vecinos_prueba_free[290:292]) {
+  V(free_corona)[name==i]$color <- "violetred3"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+#######################ocubre
+for (i in vecinos_prueba_free[293:294]) {
+  V(free_corona)[name==i]$color <- "green4"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+######################noviembre
+for (i in vecinos_prueba_free[295:296]) {
+  V(free_corona)[name==i]$color <- "green4"
+  plot(free_corona, edge.arrow.size=.04, main = "Infectados por mes (Libre escala)")
+}
+
+######################################################################################
+#vemos el número de nodos que no fueron infectados durante la simulación
+vecinos_prueba_free[1:296]->infectados_final_free
+
+as.data.frame(infectados_final_free)->infectados_data_free
+
+infectados_data_free[!duplicated(infectados_data_free), ]->infectados_sin_free
+150-length(infectados_sin_free)
+
+
